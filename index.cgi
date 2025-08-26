@@ -3,6 +3,10 @@
 use CGI;
 use Math::Trig;
 use strict;
+use utf8;
+use open qw(:std :encoding(UTF-8));
+
+
 
 $| = 1;
 
@@ -14,11 +18,6 @@ my %PARG;
 foreach my $i ($cgi->param) {
 	$PARG{$i} = $cgi->param($i);	
 }
-
-
-
-# Generate test case for SÅA
-$PARG{test} eq '1' ? SvendAdneTest() : 0;
 	
 	
 	
@@ -79,74 +78,84 @@ my $val_sqsum = quat2sqsum($val_q1, $val_q2, $val_q3, $val_q4);
 
 
 # Generate webpage
-print 'content-type: text/html'."\n\n";
+print <<EOM;
+content-type: text/html
 
-print '<html>';
-print '<head>';
-print '<title>OrientCalc</title>';
-print '<link rel="stylesheet" href="style.css">';
-print '</head>';
-print '<body>';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>OrientCalc</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h1>OrientCalc</h1>
 
-print '<h1>OrientCalc</h1>';
-
-print '<table>';
-print '<form method="post" action="index.cgi">';
-print '<tr><td>Orient</td><td><input type="text" name="orient" value="' . $val_orient . '" size="100"> <input type="submit" value="Submit"></td></tr>';
-print '</form>';
-print '<tr><td>SquareSum</td><td>' . $val_sqsum . ' ';
+<form method="post" action="index.cgi">
+<table>
+<tr><td class="label">Orient</td><td><input type="text" name="orient" value="$val_orient" size="100"> <input type="submit" value="Submit"></td></tr>
+<tr><td class="label">SquareSum</td><td>$val_sqsum
+EOM
 if (abs(1 - $val_sqsum) < 0.00001) {
-	print '<font color="#008800"><b>OK</b></font>';
+	print '<span style="color: #00bb00; font-weight: bold;">OK</span>';
 } elsif (abs(1 - $val_sqsum) < 0.1) {
-	print '<font color="#888800"><b>Slightly un-normalized, consider using NOrient() to fix.</b></font>';
+	print '<span style="color: #bbbb00; font-weight: bold;">Slightly un-normalized, consider using NOrient() to fix.</span></font>';
 } else {
-	print '<font color="#880000"><b>Unusable</b></font>';
+	print '<span style="color: #bb0000; font-weight: bold;">Unusable</span></font>';
 }
-print '</td></tr>';
-print '<tr><td colspan="2">&nbsp;</td></tr>';
-print '<form method="post" action="index.cgi">'."\n";
-print '<tr><td>Q1 (w)</td><td><input type="text" name="q1" value="' . $val_q1 . '"></td></tr>'."\n";
-print '<tr><td>Q2 (x)</td><td><input type="text" name="q2" value="' . $val_q2 . '"></td></tr>'."\n";
-print '<tr><td>Q3 (y)</td><td><input type="text" name="q3" value="' . $val_q3 . '"></td></tr>'."\n";
-print '<tr><td>Q4 (z)</td><td><input type="text" name="q4" value="' . $val_q4 . '">'."\n".'<input type="submit" value="Submit"></td></tr>';
-print '</form>';
-print '<tr><td colspan="2">&nbsp;</td></tr>';
-print '<tr><td colspan="2">Degrees (ZYX Order)</td></tr>';
-print '<form method="post" action="index.cgi">'."\n";
-print '<tr><td>Rz</td><td><input type="text" name="rz" value="' . $val_rz . '"></td></tr>'."\n";
-print '<tr><td>Ry</td><td><input type="text" name="ry" value="' . $val_ry . '"></td></tr>'."\n";
-print '<tr><td>Rx</td><td><input type="text" name="rx" value="' . $val_rx . '">'."\n".'<input type="submit" value="Submit"></td></tr>';
-print '</form>';
-print '<tr><td colspan="2">&nbsp;</td></tr>';
-print '<tr><td colspan="2">Radians (ZYX Order)</td></tr>';
-print '<form method="post" action="index.cgi">'."\n";
-print '<tr><td>Rz</td><td><input type="text" name="rz_rad" value="' . $val_rz_rad . '"></td></tr>'."\n";
-print '<tr><td>Ry</td><td><input type="text" name="ry_rad" value="' . $val_ry_rad . '"></td></tr>'."\n";
-print '<tr><td>Rx</td><td><input type="text" name="rx_rad" value="' . $val_rx_rad . '">'."\n".'<input type="submit" value="Submit"></td></tr>';
-print '</form>';
-print '<tr><td colspan="2">&nbsp;</td></tr>';
-print '<form method="post" action="index.cgi">';
-print '<tr><td colspan="2"><input type="submit" value="Reset"></td></tr>';
-print '</form>';
-print '</table>';
+print <<EOM;
+</td></tr>
+</table>
+</form>
 
-
+<form method="post" action="index.cgi">
+<table>
+<tr><td class="label">Q1 (w)</td><td><input type="text" name="q1" value="$val_q1"></td></tr>
+<tr><td class="label">Q2 (x)</td><td><input type="text" name="q2" value="$val_q2"></td></tr>
+<tr><td class="label">Q3 (y)</td><td><input type="text" name="q3" value="$val_q3"></td></tr>
+<tr><td class="label">Q4 (z)</td><td><input type="text" name="q4" value="$val_q4"> <input type="submit" value="Submit"></td></tr>
+</table>
+</form>
+<form method="post" action="index.cgi">
+<table>
+<tr><td colspan="2">Degrees (ZYX Order)</td></tr>
+<tr><td class="label">Rz</td><td><input type="text" name="rz" value="$val_rz"></td></tr>
+<tr><td class="label">Ry</td><td><input type="text" name="ry" value="$val_ry"></td></tr>
+<tr><td class="label">Rx</td><td><input type="text" name="rx" value="$val_rx"> <input type="submit" value="Submit"></td></tr>
+</table>
+</form>
+<form method="post" action="index.cgi">
+<table>
+<tr><td colspan="2">Radians (ZYX Order)</td></tr>
+<tr><td class="label">Rz</td><td><input type="text" name="rz_rad" value="$val_rz_rad"></td></tr>
+<tr><td class="label">Ry</td><td><input type="text" name="ry_rad" value="$val_ry_rad"></td></tr>
+<tr><td class="label">Rx</td><td><input type="text" name="rx_rad" value="$val_rx_rad"> <input type="submit" value="Submit"></td></tr>
+</table>
+</form>
+<form method="post" action="index.cgi">
+<table>
+<tr><td><input type="submit" value="Reset"></td></tr>
+</table>
+</form>
+EOM
 
 # COUNTER
-open(my $FILE, '<counter.txt');
+open(my $FILE, '<', 'counter.txt');
 my $counter = <$FILE>;
 close($FILE);
 $counter++;
-open(my $FILE, '>counter.txt');
-print $FILE $counter;
-close($FILE);
-print '<p>Served: ' . $counter . '</p>';
+if ($counter > 10) {
+	open(my $FILE, '>', 'counter.txt');
+	print $FILE $counter;
+	close($FILE);
+}
 
-
-
-print '<p><i><small><a href="http://www.straumland.com">www.straumland.com</a></small></i></p>';
-print '</body>';
-print '</html>';
+print <<EOM;
+<p>Served: $counter</p>
+<p><i><small><a href="http://www.straumland.com">www.straumland.com</a></small></i></p>
+</body>
+</html>
+EOM
 
 
 
