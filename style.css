@@ -1,9 +1,13 @@
 body, td, p {
-	font-family: Lucida, "Lucida Console", Consolas, Courier, sans-serif;
+	font-family: monospace;
 	font-size: 14px;
 }
 
 input {
-	font-family: Lucida, "Lucida Console", Consolas, Courier, sans-serif;
+	font-family: monospace;
 	font-size: 14px;
+}
+
+td.label {
+	width: 70px;
 }
